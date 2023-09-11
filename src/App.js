@@ -28,7 +28,7 @@ function App() {
     const [loading, setLoading] = useState(true);
 
     const filterProducts = (category) => {
-        if (category == "all") {
+        if (category === "All Products") {
             setProducts([...allProduct]);
         } else {
             setProducts(

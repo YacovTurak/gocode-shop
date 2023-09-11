@@ -13,7 +13,7 @@ function Header({ categories, onFilter }) {
                             onFilter(e.target.value);
                         }}
                     >
-                        <option value="all">all</option>
+                        <option value="All Products">All Products</option>
                         {categories.map((category) => (
                             <option key={category} value={category}>
                                 {category}

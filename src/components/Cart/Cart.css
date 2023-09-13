@@ -1,0 +1,14 @@
+.cart-icon {
+    width: 50px;
+}
+
+.cart {
+    right: 0px;
+    position: absolute;
+    background-color: aliceblue;
+    border: blue solid 4px;
+}
+
+.cart-img {
+    width: 40px;
+}

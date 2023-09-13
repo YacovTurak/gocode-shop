@@ -4,6 +4,8 @@ import Products from "./components/Products/Products";
 import Text from "./components/Text";
 import Loader from "./components/Loader/Loader";
 import "./style.css";
+import Cart from "./components/Cart/Cart";
+import MyContext from "./components/MyContext";
 
 let categories = [];
 let allProduct = [];
@@ -26,6 +28,46 @@ function App() {
 
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [cartProducts, setCartProducts] = useState([]);
+
+    const addToCart = (id) => {
+        const amount = (cartProducts.find((x) => x.id === id)?.amount ?? 0) + 1;
+        const product = products.find((x) => x.id === id);
+
+        if (amount > 1) {
+            const newCartProducts = cartProducts.map((product) => {
+                if (product.id === id) {
+                    return { ...product, amount: amount };
+                } else {
+                    return product;
+                }
+            });
+            setCartProducts(newCartProducts);
+        } else {
+            setCartProducts([...cartProducts, { ...product, amount: 1 }]);
+        }
+    };
+
+    const removeFromCart = (id) => {
+        const amount = cartProducts.find((x) => x.id === id).amount - 1;
+        const product = products.find((x) => x.id === id);
+
+        let newCartProducts;
+        if (amount === 0) {
+            newCartProducts = cartProducts.filter(
+                (product) => product.id !== id
+            );
+        } else {
+            newCartProducts = cartProducts.map((product) => {
+                if (product.id === id) {
+                    return { ...product, amount: amount };
+                } else {
+                    return product;
+                }
+            });
+        }
+        setCartProducts(newCartProducts);
+    };
 
     const filterProducts = (category) => {
         if (category === "All Products") {
@@ -42,10 +84,15 @@ function App() {
         components = <Loader />;
     } else {
         components = (
-            <div>
-                <Header onFilter={filterProducts} categories={categories} />
-                <Products products={products} />
-            </div>
+            <MyContext.Provider
+                value={[cartProducts, addToCart, removeFromCart]}
+            >
+                <div>
+                    <Cart />
+                    <Header onFilter={filterProducts} categories={categories} />
+                    <Products products={products} />
+                </div>
+            </MyContext.Provider>
         );
     }
     return <>{components}</>;

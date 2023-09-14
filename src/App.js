@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from "./components/Header/Header";
 import Products from "./components/Products/Products";
-import Text from "./components/Text";
 import Loader from "./components/Loader/Loader";
 import "./style.css";
 import Cart from "./components/Cart/Cart";

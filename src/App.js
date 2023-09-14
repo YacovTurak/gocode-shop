@@ -68,14 +68,24 @@ function App() {
         setCartProducts(newCartProducts);
     };
 
-    const filterProducts = (category) => {
+    const filterProducts = (category, sliderValue) => {
+        console.log(category, sliderValue);
+        let newProducts;
         if (category === "All Products") {
-            setProducts([...allProduct]);
+            newProducts = allProduct.filter(
+                (product) =>
+                    product.price >= sliderValue[0] &&
+                    product.price <= sliderValue[1]
+            );
         } else {
-            setProducts(
-                allProduct.filter((product) => product.category === category)
+            newProducts = allProduct.filter(
+                (product) =>
+                    product.category === category &&
+                    product.price >= sliderValue[0] &&
+                    product.price <= sliderValue[1]
             );
         }
+        setProducts(newProducts);
     };
 
     let components;
@@ -88,6 +98,7 @@ function App() {
             >
                 <div>
                     <Cart />
+
                     <Header onFilter={filterProducts} categories={categories} />
                     <Products products={products} />
                 </div>

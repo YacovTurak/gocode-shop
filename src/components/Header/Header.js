@@ -1,16 +1,42 @@
+import { useRef, useState } from "react";
 import "./Header.css";
+import { Box, Slider } from "@mui/material";
 
 function Header({ categories, onFilter }) {
+    const [sliderValue, setSliderValue] = useState([0, 1000]);
+    const selectInput = useRef("All Products");
+
+    function sliderValuetext() {
+        return `${sliderValue} $`;
+    }
+
     return (
         <nav className="product-filter">
+            <br></br>
+            <Box sx={{ width: 320 }}>
+                <h3>Filter by price</h3>
+                <Slider
+                    value={sliderValue}
+                    onChange={(event, newValue) => {
+                        setSliderValue(newValue);
+                        onFilter(selectInput.current.value, newValue);
+                    }}
+                    valueLabelDisplay="auto"
+                    getAriaValueText={sliderValuetext}
+                    min={0}
+                    max={1000}
+                    disableSwap
+                />
+            </Box>
             <h1>Jackets</h1>
 
             <div className="sort">
                 <div className="collection-sort">
                     <label>Filter by:</label>
                     <select
+                        ref={selectInput}
                         onChange={(e) => {
-                            onFilter(e.target.value);
+                            onFilter(e.target.value, sliderValue);
                         }}
                     >
                         <option value="All Products">All Products</option>

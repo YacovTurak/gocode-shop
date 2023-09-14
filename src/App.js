@@ -34,23 +34,23 @@ function App() {
         const amount = (cartProducts.find((x) => x.id === id)?.amount ?? 0) + 1;
         const product = products.find((x) => x.id === id);
 
+        let newCartProducts;
         if (amount > 1) {
-            const newCartProducts = cartProducts.map((product) => {
+            newCartProducts = cartProducts.map((product) => {
                 if (product.id === id) {
                     return { ...product, amount: amount };
                 } else {
                     return product;
                 }
             });
-            setCartProducts(newCartProducts);
         } else {
-            setCartProducts([...cartProducts, { ...product, amount: 1 }]);
+            newCartProducts = [...cartProducts, { ...product, amount: 1 }];
         }
+        setCartProducts(newCartProducts);
     };
 
     const removeFromCart = (id) => {
         const amount = cartProducts.find((x) => x.id === id).amount - 1;
-        const product = products.find((x) => x.id === id);
 
         let newCartProducts;
         if (amount === 0) {

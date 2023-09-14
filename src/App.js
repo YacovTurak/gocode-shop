@@ -69,7 +69,6 @@ function App() {
     };
 
     const filterProducts = (category, sliderValue) => {
-        console.log(category, sliderValue);
         let newProducts;
         if (category === "All Products") {
             newProducts = allProduct.filter(

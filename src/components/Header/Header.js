@@ -1,10 +1,11 @@
-import { useRef, useState } from "react";
+import { useContext, useRef } from "react";
 import "./Header.css";
 import { Box, Slider } from "@mui/material";
+import MyContext from "../MyContext";
 
 function Header({ categories, onFilter }) {
-    const [sliderValue, setSliderValue] = useState([0, 1000]);
     const selectInput = useRef("All Products");
+    const { category, sliderValue, setSliderValue } = useContext(MyContext);
 
     function sliderValuetext() {
         return `${sliderValue} $`;
@@ -12,7 +13,7 @@ function Header({ categories, onFilter }) {
 
     return (
         <nav className="product-filter">
-            <br></br>
+            <br />
             <Box sx={{ width: 320 }}>
                 <h3>Filter by price</h3>
                 <Slider
@@ -34,6 +35,7 @@ function Header({ categories, onFilter }) {
                 <div className="collection-sort">
                     <label>Filter by:</label>
                     <select
+                        value={category}
                         ref={selectInput}
                         onChange={(e) => {
                             onFilter(e.target.value, sliderValue);

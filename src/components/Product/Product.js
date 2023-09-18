@@ -1,15 +1,18 @@
 import "./Product.css";
 import MyContext from "../MyContext";
 import { useContext } from "react";
+import { Link } from "react-router-dom";
 
 function Product(props) {
-    const [cartProducts, addToCart, removeFromCart] = useContext(MyContext);
+    const { cartProducts, addToCart, removeFromCart } = useContext(MyContext);
     const amount = cartProducts.find((x) => x.id === props.id)?.amount ?? 0;
 
     return (
         <div className="product-card">
             <div className="product-image">
-                <img src={props.image} />
+                <Link to={`/products/${props.id}`}>
+                    <img src={props.image} alt="" />
+                </Link>
             </div>
             <div className="product-info">
                 <h5>{props.title}</h5>

@@ -1,15 +1,21 @@
-import { useEffect, useState } from "react";
-import Header from "./components/Header/Header";
-import Products from "./components/Products/Products";
-import Loader from "./components/Loader/Loader";
-import "./style.css";
-import Cart from "./components/Cart/Cart";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./components/views/Home";
+import ProductDetails from "./components/views/ProductDetails/ProductDetails";
 import MyContext from "./components/MyContext";
+import { useEffect, useState } from "react";
+import Loader from "./components/Loader/Loader";
+import Cart from "./components/Cart/Cart";
 
-let categories = [];
 let allProduct = [];
+let categories = [];
 
 function App() {
+    const [cartProducts, setCartProducts] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [category, setCategory] = useState("All Products");
+    const [sliderValue, setSliderValue] = useState([0, 1000]);
+
     useEffect(() => {
         fetch("https://fakestoreapi.com/products")
             .then((res) => res.json())
@@ -24,10 +30,6 @@ function App() {
                     );
             });
     }, []);
-
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [cartProducts, setCartProducts] = useState([]);
 
     const addToCart = (id) => {
         const amount = (cartProducts.find((x) => x.id === id)?.amount ?? 0) + 1;
@@ -68,43 +70,38 @@ function App() {
         setCartProducts(newCartProducts);
     };
 
-    const filterProducts = (category, sliderValue) => {
-        let newProducts;
-        if (category === "All Products") {
-            newProducts = allProduct.filter(
-                (product) =>
-                    product.price >= sliderValue[0] &&
-                    product.price <= sliderValue[1]
-            );
-        } else {
-            newProducts = allProduct.filter(
-                (product) =>
-                    product.category === category &&
-                    product.price >= sliderValue[0] &&
-                    product.price <= sliderValue[1]
-            );
-        }
-        setProducts(newProducts);
+    const context = {
+        cartProducts: cartProducts,
+        addToCart: addToCart,
+        removeFromCart: removeFromCart,
+        products: products,
+        setProducts: setProducts,
+        allProduct: allProduct,
+        categories: categories,
+        category: category,
+        setCategory: setCategory,
+        sliderValue: sliderValue,
+        setSliderValue: setSliderValue,
     };
 
-    let components;
     if (loading) {
-        components = <Loader />;
+        return <Loader />;
     } else {
-        components = (
-            <MyContext.Provider
-                value={[cartProducts, addToCart, removeFromCart]}
-            >
-                <div>
-                    <Cart />
-
-                    <Header onFilter={filterProducts} categories={categories} />
-                    <Products products={products} />
-                </div>
+        return (
+            <MyContext.Provider value={context}>
+                <Cart />
+                <Router>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route
+                            path="/products/:id"
+                            element={<ProductDetails />}
+                        />
+                    </Routes>
+                </Router>
             </MyContext.Provider>
         );
     }
-    return <>{components}</>;
 }
 
 export default App;

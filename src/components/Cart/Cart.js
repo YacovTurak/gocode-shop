@@ -3,7 +3,7 @@ import MyContext from "../MyContext";
 import { useContext } from "react";
 
 export default function Cart() {
-    const [cartProducts, addToCart, removeFromCart] = useContext(MyContext);
+    const { cartProducts, addToCart, removeFromCart } = useContext(MyContext);
     return (
         <div className="cart">
             <img

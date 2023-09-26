@@ -1,13 +1,13 @@
 const express = require("express");
-const fs = require("fs");
-const mongoose = require("mongoose");
+// const fs = require("fs");
+// const mongoose = require("mongoose");
 
-require("dotenv").config();
+// require("dotenv").config();
 
 const app = express();
 
-app.use(express.json());
-app.use(express.static("client/build"));
+// app.use(express.json());
+// app.use(express.static("client/build"));
 
 // const productSchema = new mongoose.Schema({
 //     title: String,
@@ -124,5 +124,5 @@ app.use(express.static("client/build"));
 
 app.listen(process.env.PORT || 5000, () => {
     console.log("Ani Maazin!");
-    initProducts();
+    // initProducts();
 });

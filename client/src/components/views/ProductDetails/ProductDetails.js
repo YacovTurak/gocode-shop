@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Loader from "../../Loader/Loader";
 import { useContext, useEffect, useState } from "react";
 import MyContext from "../../MyContext";
@@ -24,9 +24,6 @@ function ProductDetails() {
     } else {
         return (
             <div>
-                <Link to="/">
-                    <h1>Home</h1>
-                </Link>
                 <br />
                 <h1>{product.title}</h1>
                 <img src={product.image} alt="" />

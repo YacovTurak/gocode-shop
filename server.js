@@ -21,6 +21,11 @@ const Product = mongoose.model("Product", productSchema);
 
 app.get("/api/products", (req, res) => {
     const { title, category, min_price, max_price } = req.query;
+    // fs.readFile("products.json", "utf8", (err, data) => {
+    //     let products = JSON.parse(data);
+    //     res.send(products);
+    // });
+    // return;
     Product.find({
         /* title: { $regex: title, $options: "i" } */
     }).then((products) => {
@@ -74,7 +79,15 @@ app.post("/api/products", (req, res) => {
     const { title, price, description, category, image, rating } = req.body;
     const product = new Product({ title, price, description, category, image });
     product.save().then((newProduct) => {
-        res.send(newProduct);
+        res.send({
+            id: newProduct._id,
+            title: newProduct.title,
+            category: newProduct.category,
+            price: newProduct.price,
+            description: newProduct.description,
+            image: newProduct.image,
+            rating: product.rating,
+        });
     });
 });
 
@@ -102,7 +115,10 @@ app.get("*", (req, res) => {
 });
 
 const initProducts = () => {
-    Product.findOne({}).then((product) => {
+    Product.findOne({}).then((err, product) => {
+        if (err) {
+            console.log("err", err);
+        }
         if (!product) {
             fs.readFile("./products.json", "utf8", (err, data) => {
                 const products = JSON.parse(data);
@@ -124,5 +140,5 @@ mongoose.connect(
 
 app.listen(process.env.PORT || 5000, () => {
     console.log("Ani Maazin!");
-    initProducts();
+    // initProducts();
 });

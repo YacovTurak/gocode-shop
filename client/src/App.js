@@ -1,10 +1,12 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Home from "./components/views/Home";
 import ProductDetails from "./components/views/ProductDetails/ProductDetails";
 import MyContext from "./components/MyContext";
 import { useEffect, useState } from "react";
 import Loader from "./components/Loader/Loader";
 import Cart from "./components/Cart/Cart";
+import Admin from "./components/views/Admin";
+import AddProduct from "./components/views/AddProduct/AddProduct";
 
 let allProduct = [];
 let categories = [];
@@ -89,14 +91,22 @@ function App() {
     } else {
         return (
             <MyContext.Provider value={context}>
-                <Cart />
                 <Router>
+                    <Cart />
+                    <Link to="/">
+                        <h1>Home</h1>
+                    </Link>
+                    <Link to="/admin">
+                        <h1>Admin</h1>
+                    </Link>
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route
                             path="/products/:id"
                             element={<ProductDetails />}
                         />
+                        <Route path="/admin" element={<Admin />} />
+                        <Route path="/products/add" element={<AddProduct />} />
                     </Routes>
                 </Router>
             </MyContext.Provider>

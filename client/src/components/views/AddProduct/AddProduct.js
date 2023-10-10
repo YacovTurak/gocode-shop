@@ -19,7 +19,11 @@ function AddProduct() {
 
     const navigate = useNavigate();
     const goBack = () => {
-        navigate(-1);
+        if (location.key !== "default") {
+            navigate(-1);
+        } else {
+            navigate("/");
+        }
     };
 
     const saveHandle = () => {
@@ -37,13 +41,7 @@ function AddProduct() {
                 setLoading(false);
                 setSuccess(true);
                 successMessage.current?.scrollIntoView({ behavior: "smooth" });
-                setTimeout(() => {
-                    if (location.key !== "default") {
-                        goBack();
-                    } else {
-                        navigate("/");
-                    }
-                }, 3500);
+                setTimeout(goBack, 3500);
             });
         });
     };

@@ -22,6 +22,8 @@ import {
 import { useContext } from "react";
 import MyContext from "../MyContext";
 import { Link } from "react-router-dom";
+import ConfirmDialog from "../ConfirmDialog";
+import { Snackbar } from "@mui/material";
 
 // const roles = ["Market", "Finance", "Development"];
 // const randomRole = () => {
@@ -323,7 +325,11 @@ export default function Admin() {
         categories,
         category,
         setCategory,
+        setShortMessage,
     } = useContext(MyContext);
+
+    const [showConfirm, setShowConfirm] = React.useState(false);
+    const [currentProduct, setCurrentProduct] = React.useState({});
 
     const [rows, setRows] = React.useState(products);
     const [rowModesModel, setRowModesModel] = React.useState({});
@@ -349,7 +355,35 @@ export default function Admin() {
     };
 
     const handleDeleteClick = (id) => () => {
-        setRows(rows.filter((row) => row.id !== id));
+        setCurrentProduct(rows.find((row) => row.id === id));
+        setShowConfirm(true);
+    };
+
+    const handleConfirmDelete = (onEnd) => {
+        fetch(`/api/products/${currentProduct.id}`, {
+            method: "DELETE",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+        }).then((res) =>
+            res.json().then((res) => {
+                console.log(res);
+                setShowConfirm(false);
+                setProducts(
+                    products.filter(
+                        (product) => product.id !== currentProduct.id
+                    )
+                );
+                setRows(rows.filter((row) => row.id !== currentProduct.id));
+                onEnd(false);
+                setShortMessage({
+                    open: true,
+                    message: "The product has been successfully deleted",
+                    severity: "info",
+                });
+            })
+        );
     };
 
     const handleCancelClick = (id) => () => {
@@ -508,6 +542,21 @@ export default function Admin() {
                 },
             }}
         >
+            <ConfirmDialog
+                open={showConfirm}
+                title="Are you sure you want to delete this product?"
+                setOpen={setShowConfirm}
+                onConfirm={handleConfirmDelete}
+                currentProduct={currentProduct}
+            >
+                <h3>{currentProduct.title}</h3>
+                <img
+                    style={{ maxWidth: "180px", maxHeight: "180px" }}
+                    src={currentProduct.image}
+                    alt={currentProduct.title}
+                />
+                <p>{currentProduct.description}</p>
+            </ConfirmDialog>
             <DataGrid
                 rows={rows}
                 columns={columns}

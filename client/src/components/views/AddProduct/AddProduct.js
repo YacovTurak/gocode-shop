@@ -8,14 +8,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 function AddProduct() {
     const [product, setProduct] = useState({});
     const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const { categories, products, setProducts } = useContext(MyContext);
-    const successMessage = useRef(null);
+    const { categories, products, setProducts, setShortMessage } =
+        useContext(MyContext);
     const location = useLocation();
-
-    useEffect(() => {
-        successMessage.current?.scrollIntoView({ behavior: "smooth" });
-    }, [success]);
 
     const navigate = useNavigate();
     const goBack = () => {
@@ -39,9 +34,12 @@ function AddProduct() {
             res.json().then((newProduct) => {
                 setProducts([...products, newProduct]);
                 setLoading(false);
-                setSuccess(true);
-                successMessage.current?.scrollIntoView({ behavior: "smooth" });
-                setTimeout(goBack, 3500);
+                setShortMessage({
+                    open: true,
+                    message: "New product added successful!",
+                    severity: "success",
+                });
+                goBack();
             });
         });
     };
@@ -141,16 +139,11 @@ function AddProduct() {
                     onClick={saveHandle}
                     loading={loading}
                     variant="contained"
-                    disabled={success}
+                    disabled={loading}
                 >
                     <span>Save</span>
                 </LoadingButton>
             </Box>
-            {success && (
-                <Alert ref={successMessage} severity="success">
-                    New product is added successful!
-                </Alert>
-            )}
         </div>
     );
 }

@@ -2,11 +2,17 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Home from "./components/views/Home";
 import ProductDetails from "./components/views/ProductDetails/ProductDetails";
 import MyContext from "./components/MyContext";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import Loader from "./components/Loader/Loader";
 import Cart from "./components/Cart/Cart";
 import Admin from "./components/views/Admin";
 import AddProduct from "./components/views/AddProduct/AddProduct";
+import MuiAlert from "@mui/material/Alert";
+import { Button, Snackbar } from "@mui/material";
+
+const Alert = forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 let allProduct = [];
 let categories = [];
@@ -17,6 +23,9 @@ function App() {
     const [loading, setLoading] = useState(true);
     const [category, setCategory] = useState("All Products");
     const [sliderValue, setSliderValue] = useState([0, 1000]);
+
+    // used for success message
+    const [ShortMessage, setShortMessage] = useState({ open: false });
 
     useEffect(() => {
         fetch("/api/products")
@@ -32,6 +41,15 @@ function App() {
                     );
             });
     }, []);
+
+    // used for success message
+    const handleShortMessageClose = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+
+        setShortMessage({ ...ShortMessage, open: false });
+    };
 
     const addToCart = (id) => {
         const amount = (cartProducts.find((x) => x.id === id)?.amount ?? 0) + 1;
@@ -84,6 +102,7 @@ function App() {
         setCategory: setCategory,
         sliderValue: sliderValue,
         setSliderValue: setSliderValue,
+        setShortMessage: setShortMessage,
     };
 
     if (loading) {
@@ -109,6 +128,19 @@ function App() {
                         <Route path="/products/add" element={<AddProduct />} />
                     </Routes>
                 </Router>
+                <Snackbar
+                    open={ShortMessage.open}
+                    autoHideDuration={6000}
+                    onClose={handleShortMessageClose}
+                >
+                    <Alert
+                        onClose={handleShortMessageClose}
+                        severity={ShortMessage?.severity}
+                        sx={{ width: "100%" }}
+                    >
+                        {ShortMessage?.message}
+                    </Alert>
+                </Snackbar>
             </MyContext.Provider>
         );
     }

@@ -3,9 +3,15 @@ import "./Header.css";
 import { Box, Slider } from "@mui/material";
 import MyContext from "../MyContext";
 
-function Header({ categories, onFilter }) {
+function Header({ categories }) {
     const selectInput = useRef("All Products");
-    const { category, sliderValue, setSliderValue } = useContext(MyContext);
+    const {
+        category,
+        setCategory,
+        sliderValue,
+        setSliderValue,
+        filterProducts,
+    } = useContext(MyContext);
 
     function sliderValuetext() {
         return `${sliderValue} $`;
@@ -20,7 +26,7 @@ function Header({ categories, onFilter }) {
                     value={sliderValue}
                     onChange={(event, newValue) => {
                         setSliderValue(newValue);
-                        onFilter(selectInput.current.value, newValue);
+                        filterProducts(selectInput.current.value, newValue);
                     }}
                     valueLabelDisplay="auto"
                     getAriaValueText={sliderValuetext}
@@ -38,7 +44,8 @@ function Header({ categories, onFilter }) {
                         value={category}
                         ref={selectInput}
                         onChange={(e) => {
-                            onFilter(e.target.value, sliderValue);
+                            setCategory(e.target.value);
+                            filterProducts(e.target.value, sliderValue);
                         }}
                     >
                         <option value="All Products">All Products</option>

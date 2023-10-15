@@ -1,19 +1,33 @@
-import { Alert, Box, Button, MenuItem, TextField } from "@mui/material";
+import {
+    Autocomplete,
+    Box,
+    Button,
+    MenuItem,
+    TextField,
+    toggleButtonClasses,
+} from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import MyContext from "../../MyContext";
 import "./AddProduct.css";
 import { useLocation, useNavigate } from "react-router-dom";
+import { buttonClasses } from "@mui/material/Button";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 function AddProduct() {
+    // המוצר החדש להוספה
     const [product, setProduct] = useState({});
+    // הצגת ספינר בלחצן השמירה
     const [loading, setLoading] = useState(false);
     const { categories, products, setProducts, setShortMessage } =
         useContext(MyContext);
-    const location = useLocation();
 
+    // גישה לניווט בהיסטוריה
+    const location = useLocation();
     const navigate = useNavigate();
+    // חזור אחורה
     const goBack = () => {
+        // אם היה דף קודם - חזור אחורה, אם לא - עבור לדף הבית
         if (location.key !== "default") {
             navigate(-1);
         } else {
@@ -21,8 +35,10 @@ function AddProduct() {
         }
     };
 
+    // בעת שמירה
     const saveHandle = () => {
         setLoading(true);
+        // שמור בשרת
         fetch("/api/products", {
             method: "POST",
             headers: {
@@ -31,23 +47,55 @@ function AddProduct() {
             },
             body: JSON.stringify(product),
         }).then((res) => {
+            // שמור בקליינט
             res.json().then((newProduct) => {
                 setProducts([...products, newProduct]);
-                setLoading(false);
+                // הצג הודעת הצלחה
                 setShortMessage({
                     open: true,
                     message: "New product added successful!",
                     severity: "success",
                 });
+                // חזור אחורה
                 goBack();
             });
         });
     };
 
+    // ערכת נושא לעיצוב לחצן בעת טעינה
+    const defaultTheme = createTheme();
+    const LoadingButtonTheme = createTheme({
+        palette: {
+            action: {
+                disabledBackground: "", // don't set the disable background color
+                disabled: "white", // set the disable foreground color
+            },
+        },
+        components: {
+            MuiButtonBase: {
+                styleOverrides: {
+                    root: {
+                        [`&.${buttonClasses.disabled}`]: {
+                            opacity: 0.5,
+                        },
+                        // Fix ButtonGroup disabled styles.
+                        [`&.${toggleButtonClasses.root}.${buttonClasses.disabled}`]:
+                            {
+                                color: defaultTheme.palette.action.disabled,
+                                borderColor:
+                                    defaultTheme.palette.action
+                                        .disabledBackground,
+                            },
+                    },
+                },
+            },
+        },
+    });
+
     return (
         <div>
             <br />
-            <h1>New Product</h1>
+            <h1>Add New Product</h1>
             <br />
             <Box
                 component="form"
@@ -67,23 +115,47 @@ function AddProduct() {
                     }}
                 />
                 <br />
-                <TextField
+                {/* <TextField
                     select
                     label="Category"
                     sx={{ width: "200px" }}
                     value={product.category}
                     onChange={(e) => {
+                        if (e.target.value === "Add category...") {
+                            console.log("add category");
+                        }
                         setProduct({ ...product, category: e.target.value });
-                        console.log(e.target.value);
                     }}
                 >
-                    {categories.map((category) => (
-                        <MenuItem key={category} value={category}>
+                    {["Add category...", ...categories].map((category) => (
+                        <MenuItem
+                            key={category}
+                            value={category}
+                            sx={{
+                                fontWeight:
+                                    category === "Add category..."
+                                        ? "bold"
+                                        : "normal",
+                            }}
+                        >
                             {category}
                         </MenuItem>
                     ))}
-                </TextField>
-
+                </TextField> */}
+                <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    options={categories}
+                    sx={{ width: "200px" }}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Category" />
+                    )}
+                    value={product.category}
+                    freeSolo
+                    onSelect={(e) => {
+                        setProduct({ ...product, category: e.target.value });
+                    }}
+                />
                 <TextField
                     label="Price"
                     sx={{ width: "200px" }}
@@ -117,6 +189,7 @@ function AddProduct() {
                     <img
                         src={product.image}
                         alt={product.image}
+                        // key-צריך להשתמש ב src-כדי שהתמונה תשתנה מיד כשמשנים את ה
                         key={product.image}
                         className="product-image"
                     />
@@ -131,18 +204,20 @@ function AddProduct() {
                     },
                 }}
             >
-                <Button onClick={goBack} loading={loading} variant="outlined">
+                <Button onClick={goBack} variant="outlined" disabled={loading}>
                     <span>Cancel</span>
                 </Button>
 
-                <LoadingButton
-                    onClick={saveHandle}
-                    loading={loading}
-                    variant="contained"
-                    disabled={loading}
-                >
-                    <span>Save</span>
-                </LoadingButton>
+                <ThemeProvider theme={LoadingButtonTheme}>
+                    <LoadingButton
+                        onClick={saveHandle}
+                        loading={loading}
+                        variant="contained"
+                        disabled={loading}
+                    >
+                        <span>Save</span>
+                    </LoadingButton>
+                </ThemeProvider>
             </Box>
         </div>
     );

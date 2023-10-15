@@ -8,18 +8,21 @@ import Cart from "./components/Cart/Cart";
 import Admin from "./components/views/Admin";
 import AddProduct from "./components/views/AddProduct/AddProduct";
 import MuiAlert from "@mui/material/Alert";
-import { Button, Snackbar } from "@mui/material";
+import { Snackbar } from "@mui/material";
+import NavigationMenu from "./components/views/NavigationMenu";
+import NavBar from "./components/views/Navbar";
 
 const Alert = forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-let allProduct = [];
+// let allProducts = [];
 let categories = [];
 
 function App() {
     const [cartProducts, setCartProducts] = useState([]);
     const [products, setProducts] = useState([]);
+    const [productsFiltered, setProductsFiltered] = useState([]);
     const [loading, setLoading] = useState(true);
     const [category, setCategory] = useState("All Products");
     const [sliderValue, setSliderValue] = useState([0, 1000]);
@@ -32,15 +35,39 @@ function App() {
             .then((res) => res.json())
             .then((products) => {
                 setProducts(products);
-                allProduct = [...products];
+                // setProductsFiltered([...products]);
                 setLoading(false);
-                categories = products
-                    .map((p) => p.category)
-                    .filter(
-                        (value, index, array) => array.indexOf(value) === index
-                    );
             });
     }, []);
+
+    // כשרשימת המוצרים מתעדכנת - עדכן את רשימת המוצרים המסוננים
+    useEffect(() => {
+        filterProducts(category, sliderValue);
+        categories = products
+            .map((p) => p.category)
+            .filter((value, index, array) => array.indexOf(value) === index);
+    }, [products]);
+
+    // סינון המוצרים
+    const filterProducts = (category, sliderValue) => {
+        let newProducts;
+        if (category === "All Products") {
+            newProducts = products.filter(
+                (product) =>
+                    (product?.price ?? 0) >= sliderValue[0] &&
+                    (product?.price ?? 0) <= sliderValue[1]
+            );
+        } else {
+            newProducts = products.filter(
+                (product) =>
+                    product.category === category &&
+                    (product?.price ?? 0) >= sliderValue[0] &&
+                    (product?.price ?? 0) <= sliderValue[1]
+            );
+        }
+        setProductsFiltered(newProducts);
+        setCategory(category);
+    };
 
     // used for success message
     const handleShortMessageClose = (event, reason) => {
@@ -96,7 +123,9 @@ function App() {
         removeFromCart: removeFromCart,
         products: products,
         setProducts: setProducts,
-        allProduct: allProduct,
+        filterProducts: filterProducts,
+        productsFiltered: productsFiltered,
+        setProductsFiltered: setProductsFiltered,
         categories: categories,
         category: category,
         setCategory: setCategory,
@@ -111,6 +140,7 @@ function App() {
         return (
             <MyContext.Provider value={context}>
                 <Router>
+                    <NavBar />
                     <Cart />
                     <Link to="/">
                         <h1>Home</h1>

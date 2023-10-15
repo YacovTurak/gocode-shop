@@ -86,7 +86,7 @@ app.post("/api/products", (req, res) => {
             price: newProduct.price,
             description: newProduct.description,
             image: newProduct.image,
-            rating: product.rating,
+            rating: newProduct.rating,
         });
     });
 });
@@ -96,7 +96,15 @@ app.put("/api/products/:id", (req, res) => {
     const product = req.body;
     Product.findByIdAndUpdate(id, product, { new: true }).then(
         (updatedProduct) => {
-            res.send(updatedProduct);
+            res.send({
+                id: updatedProduct._id,
+                title: updatedProduct.title,
+                category: updatedProduct.category,
+                price: updatedProduct.price,
+                description: updatedProduct.description,
+                image: updatedProduct.image,
+                rating: updatedProduct.rating,
+            });
         }
     );
 });

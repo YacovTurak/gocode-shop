@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./components/views/Home";
 import ProductDetails from "./components/views/ProductDetails/ProductDetails";
 import MyContext from "./components/MyContext";
@@ -9,7 +9,6 @@ import Admin from "./components/views/Admin";
 import AddProduct from "./components/views/AddProduct/AddProduct";
 import MuiAlert from "@mui/material/Alert";
 import { Snackbar } from "@mui/material";
-import NavigationMenu from "./components/views/NavigationMenu";
 import NavBar from "./components/views/Navbar";
 
 const Alert = forwardRef(function Alert(props, ref) {
@@ -26,6 +25,7 @@ function App() {
     const [loading, setLoading] = useState(true);
     const [category, setCategory] = useState("All Products");
     const [sliderValue, setSliderValue] = useState([0, 1000]);
+    const [showCart, setShowCart] = useState(false);
 
     // used for success message
     const [ShortMessage, setShortMessage] = useState({ open: false });
@@ -118,6 +118,8 @@ function App() {
     };
 
     const context = {
+        showCart: showCart,
+        setShowCart: setShowCart,
         cartProducts: cartProducts,
         addToCart: addToCart,
         removeFromCart: removeFromCart,
@@ -142,12 +144,7 @@ function App() {
                 <Router>
                     <NavBar />
                     <Cart />
-                    <Link to="/">
-                        <h1>Home</h1>
-                    </Link>
-                    <Link to="/admin">
-                        <h1>Admin</h1>
-                    </Link>
+                    <div style={{ height: 80 }} />
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route

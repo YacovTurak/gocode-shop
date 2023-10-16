@@ -115,33 +115,6 @@ function AddProduct() {
                     }}
                 />
                 <br />
-                {/* <TextField
-                    select
-                    label="Category"
-                    sx={{ width: "200px" }}
-                    value={product.category}
-                    onChange={(e) => {
-                        if (e.target.value === "Add category...") {
-                            console.log("add category");
-                        }
-                        setProduct({ ...product, category: e.target.value });
-                    }}
-                >
-                    {["Add category...", ...categories].map((category) => (
-                        <MenuItem
-                            key={category}
-                            value={category}
-                            sx={{
-                                fontWeight:
-                                    category === "Add category..."
-                                        ? "bold"
-                                        : "normal",
-                            }}
-                        >
-                            {category}
-                        </MenuItem>
-                    ))}
-                </TextField> */}
                 <Autocomplete
                     disablePortal
                     id="combo-box-demo"

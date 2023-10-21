@@ -7,7 +7,7 @@ import Divider from "@mui/material/Divider";
 import MyContext from "../MyContext";
 import { Button, DialogContent, Typography } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import CartItem from "./CartItem/CartItem";
+import CartItem from "./CartItem/CartItem.js";
 import "./Cart.css";
 // import emptyCart from "....../public/images/empty-cart.png";
 // import emptyCart from "..../public/images/empty-cart.png";

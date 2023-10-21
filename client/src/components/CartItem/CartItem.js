@@ -4,7 +4,7 @@ import { Button, Divider, IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import CloseIcon from "@mui/icons-material/Close";
-import MyContext from "../../MyContext";
+import MyContext from "../MyContext";
 
 export default function CartItem(props) {
     const { addToCart, removeFromCart, deleteFromCart } =

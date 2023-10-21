@@ -6,7 +6,8 @@ import Slide from "@mui/material/Slide";
 import { Button, List, ListItemIcon } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Link } from "react-router-dom";
-import MyContext from "../MyContext";
+import MyContext from "../../MyContext";
+import "./Navbar.css";
 
 function HideOnScroll(props) {
     const { children } = props;
@@ -19,8 +20,8 @@ function HideOnScroll(props) {
     );
 }
 
-export default function NavBar(props) {
-    const { showCart, setShowCart } = React.useContext(MyContext);
+export default function Navbar(props) {
+    const { showCart, setShowCart, cartProducts } = React.useContext(MyContext);
 
     return (
         // <HideOnScroll {...props}>
@@ -47,6 +48,13 @@ export default function NavBar(props) {
                 >
                     My Cart
                 </Button>
+                {cartProducts.length === 0 ? (
+                    ""
+                ) : (
+                    <div className="circle-text">
+                        <div>{cartProducts.length}</div>
+                    </div>
+                )}
             </Toolbar>
         </AppBar>
         // </HideOnScroll>

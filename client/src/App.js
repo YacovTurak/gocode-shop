@@ -9,7 +9,7 @@ import Admin from "./components/views/Admin";
 import AddProduct from "./components/views/AddProduct/AddProduct";
 import MuiAlert from "@mui/material/Alert";
 import { Snackbar } from "@mui/material";
-import NavBar from "./components/views/Navbar";
+import Navbar from "./components/views/Navbar/Navbar.js";
 
 const Alert = forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -117,12 +117,17 @@ function App() {
         setCartProducts(newCartProducts);
     };
 
+    const deleteFromCart = (id) => {
+        setCartProducts(cartProducts.filter((product) => product.id !== id));
+    };
+
     const context = {
         showCart: showCart,
         setShowCart: setShowCart,
         cartProducts: cartProducts,
         addToCart: addToCart,
         removeFromCart: removeFromCart,
+        deleteFromCart: deleteFromCart,
         products: products,
         setProducts: setProducts,
         filterProducts: filterProducts,
@@ -142,7 +147,7 @@ function App() {
         return (
             <MyContext.Provider value={context}>
                 <Router>
-                    <NavBar />
+                    <Navbar />
                     <Cart />
                     <div style={{ height: 80 }} />
                     <Routes>

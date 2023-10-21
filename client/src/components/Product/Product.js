@@ -2,11 +2,16 @@ import "./Product.css";
 import MyContext from "../MyContext";
 import { useContext } from "react";
 import { Link } from "react-router-dom";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
-import { Button, CardActionArea, CardActions, Grid } from "@mui/material";
+import {
+    Button,
+    Card,
+    CardActionArea,
+    CardActions,
+    CardContent,
+    CardMedia,
+    Grid,
+    Typography,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 
@@ -51,6 +56,13 @@ export default function Product(props) {
     const NotInCart = () => {
         return (
             <Button
+                variant="contained"
+                sx={{
+                    borderRadius: "20px",
+                    margin: "auto",
+                    textTransform: "none",
+                    minWidth: "150px",
+                }}
                 onClick={() => {
                     addToCart(props.id);
                 }}

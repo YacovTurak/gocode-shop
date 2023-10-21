@@ -1,86 +1,58 @@
-// import "./Cart.css";
-// import MyContext from "../MyContext";
-// import { useContext } from "react";
-
-// export default function Cart() {
-//     const { cartProducts, addToCart, removeFromCart } = useContext(MyContext);
-//     return (
-//         <div className="cart">
-//             <img
-//                 className="cart-icon"
-//                 src="https://static.vecteezy.com/system/resources/previews/004/999/463/non_2x/shopping-cart-icon-illustration-free-vector.jpg"
-//                 alt="My Cart"
-//             ></img>
-//             <ul>
-//                 {cartProducts.map((product) => {
-//                     return (
-//                         <div key={product.id}>
-//                             <div>
-//                                 <br></br>
-//                                 <img
-//                                     className="cart-img"
-//                                     src={product.image}
-//                                     alt={product.title}
-//                                 ></img>
-//                                 <div>{product.title}</div>
-//                                 {product.price} $
-//                             </div>
-//                             <button
-//                                 onClick={() => {
-//                                     addToCart(product.id);
-//                                 }}
-//                             >
-//                                 +
-//                             </button>
-//                             {product.amount}
-//                             <button
-//                                 onClick={() => {
-//                                     removeFromCart(product.id);
-//                                 }}
-//                             >
-//                                 -
-//                             </button>
-//                             <br></br>
-//                         </div>
-//                     );
-//                 })}
-//             </ul>
-//         </div>
-//     );
-// }
-
 import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import MyContext from "../MyContext";
-import { Button } from "@mui/material";
+import { Button, DialogContent, Typography } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-
-const drawerWidth = 240;
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-    display: "flex",
-    alignItems: "center",
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-    justifyContent: "flex-start",
-}));
+import CartItem from "./CartItem/CartItem";
+import "./Cart.css";
+// import emptyCart from "....../public/images/empty-cart.png";
+// import emptyCart from "..../public/images/empty-cart.png";
+// import imagePath from "./public/images/empty-cart.png";
+// const imagePath = "./public/images/empty-cart.png";
 
 export default function Cart() {
-    const { showCart, setShowCart } = React.useContext(MyContext);
+    const { cartProducts, showCart, setShowCart } = React.useContext(MyContext);
+
+    const drawerWidth = 340;
+
+    const DrawerHeader = styled("div")(({ theme }) => ({
+        display: "flex",
+        alignItems: "center",
+        padding: theme.spacing(0, 1),
+        // necessary for content to be below app bar
+        ...theme.mixins.toolbar,
+        justifyContent: "flex-start",
+    }));
 
     const handleDrawerClose = () => {
         setShowCart(false);
+    };
+
+    const EmptyCart = () => {
+        return (
+            <div
+                style={{
+                    marginTop: "auto",
+                    marginBottom: "auto",
+                    alignSelf: "center",
+                    textAlign: "center",
+                }}
+            >
+                <img
+                    src="/images/empty-cart.png"
+                    alt=""
+                    style={{ width: "75%" }}
+                />
+                <br />
+                <br />
+                <br />
+                <h1>Your cart is empty</h1>
+            </div>
+        );
     };
 
     return (
@@ -91,6 +63,9 @@ export default function Cart() {
                     flexShrink: 0,
                     "& .MuiDrawer-paper": {
                         width: drawerWidth,
+                        boxShadow:
+                            "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)",
+                        backgroundColor: "#f0f0f0",
                     },
                 }}
                 variant="persistent"
@@ -105,26 +80,55 @@ export default function Cart() {
                     >
                         My Cart
                     </Button>
+                    <div className="circle-text-in-cart">
+                        <div>{cartProducts.length}</div>
+                    </div>
                 </DrawerHeader>
                 <Divider />
-                <List>
-                    {["Inbox", "Starred", "Send email", "Drafts"].map(
-                        (text, index) => (
-                            <ListItem key={text} disablePadding>
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        {index % 2 === 0 ? (
-                                            <InboxIcon />
-                                        ) : (
-                                            <MailIcon />
-                                        )}
-                                    </ListItemIcon>
-                                    <ListItemText primary={text} />
-                                </ListItemButton>
-                            </ListItem>
-                        )
-                    )}
-                </List>
+                {cartProducts.length > 0 ? (
+                    <>
+                        <DialogContent sx={{ padding: "unset" }}>
+                            <List>
+                                {cartProducts.map((product) => (
+                                    <CartItem
+                                        key={product.id}
+                                        id={product.id}
+                                        title={product.title}
+                                        price={product.price}
+                                        amount={product.amount}
+                                        image={product.image}
+                                    />
+                                ))}
+                            </List>
+                        </DialogContent>
+                        <div
+                            className="sub-total"
+                            style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                padding: "15px",
+                                marginLeft: "0",
+                                marginRight: "0",
+                                borderTop: "1px solid rgb(0, 0, 0, 0.5)",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            <div>Subtotal:</div>
+                            <div>
+                                {cartProducts
+                                    .reduce(function (acc, product) {
+                                        return (
+                                            acc + product.price * product.amount
+                                        );
+                                    }, 0)
+                                    .toFixed(2) + "$"}
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    <EmptyCart />
+                )}
             </Drawer>
         </Box>
     );

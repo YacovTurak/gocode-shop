@@ -55,12 +55,13 @@ export default function Convert() {
             },
             body: JSON.stringify({ url: image.url }),
         }).then((response) => {
-            response.json().then((src) => {
-                console.log("TCL: sendHandle -> src", src);
+            response.json().then((srcbb) => {
+                console.log("TCL: sendHandle -> src", srcbb);
+                const fullSrc = srcbb.part1 + srcbb.part2;
                 setLoading(false);
                 setImage({
                     ...image,
-                    src: src.part1 + src.part2,
+                    srcaa: fullSrc,
                 });
             });
         });
@@ -87,7 +88,7 @@ export default function Convert() {
                     <span>Save</span>
                 </LoadingButton>
             </ThemeProvider>
-            <img src={image.src} alt="" />
+            <img key="1" src={image.srcaa} alt="" />
         </div>
     );
 }

@@ -151,6 +151,8 @@ app.post("/api/convert", (req, res) => {
             const base64 =
                 "data:image/jpeg;base64," + arrayBufferToBase64(buffer);
             const [part1, part2] = splitText(base64);
+            console.log("TCL: part1", part1);
+            console.log("TCL: part2", part2);
             res.json({ part1, part2 });
             // res.send(base64);
         });

@@ -191,6 +191,7 @@ app.post("/api/convert", (req, res) => {
             const [part1, part2, textLength] = splitText(base64);
             console.log("TCL: part1", part1);
             console.log("TCL: part2", part2);
+            console.log("TCL: textLength", textLength);
             res.json({ part1, part2, textLength });
             // res.send(base64);
         });

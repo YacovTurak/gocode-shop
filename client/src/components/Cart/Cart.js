@@ -5,7 +5,7 @@ import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import MyContext from "../MyContext";
-import { Button, DialogContent, Typography } from "@mui/material";
+import { Badge, Button, DialogContent, Typography } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CartItem from "../CartItem/CartItem.js";
 import "./Cart.css";
@@ -75,14 +75,18 @@ export default function Cart() {
                 <DrawerHeader>
                     <Button
                         onClick={handleDrawerClose}
-                        endIcon={<ShoppingCartIcon />}
+                        endIcon={
+                            <Badge
+                                badgeContent={cartProducts.length}
+                                color="secondary"
+                            >
+                                <ShoppingCartIcon style={{ fontSize: 40 }} />
+                            </Badge>
+                        }
                         sx={{ margin: "auto" }}
                     >
                         My Cart
                     </Button>
-                    <div className="circle-text-in-cart">
-                        <div>{cartProducts.length}</div>
-                    </div>
                 </DrawerHeader>
                 <Divider />
                 {cartProducts.length > 0 ? (

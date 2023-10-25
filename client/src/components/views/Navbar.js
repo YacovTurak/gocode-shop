@@ -3,11 +3,10 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import Slide from "@mui/material/Slide";
-import { Button, List, ListItemIcon } from "@mui/material";
+import { Badge, Button, List, ListItemIcon } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Link } from "react-router-dom";
-import MyContext from "../../MyContext";
-import "./Navbar.css";
+import MyContext from "../MyContext";
 
 function HideOnScroll(props) {
     const { children } = props;
@@ -44,17 +43,17 @@ export default function Navbar(props) {
                         setShowCart(true);
                     }}
                     sx={{ ...(showCart && { display: "none" }) }}
-                    endIcon={<ShoppingCartIcon />}
+                    endIcon={
+                        <Badge
+                            badgeContent={cartProducts.length}
+                            color="secondary"
+                        >
+                            <ShoppingCartIcon style={{ fontSize: 40 }} />
+                        </Badge>
+                    }
                 >
                     My Cart
                 </Button>
-                {cartProducts.length === 0 ? (
-                    ""
-                ) : (
-                    <div className="circle-text">
-                        <div>{cartProducts.length}</div>
-                    </div>
-                )}
             </Toolbar>
         </AppBar>
         // </HideOnScroll>

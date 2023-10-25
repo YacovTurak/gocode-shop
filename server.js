@@ -16,8 +16,14 @@ const productSchema = new mongoose.Schema({
     category: String,
     image: String,
 });
-
 const Product = mongoose.model("Product", productSchema);
+
+const userSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    email: { type: String, unique: true, required: true },
+    password: { type: String, required: true },
+});
+const User = mongoose.model("User", userSchema);
 
 app.get("/api/products", (req, res) => {
     const { title, category, min_price, max_price } = req.query;
@@ -117,6 +123,48 @@ app.delete("/api/products/:id", (req, res) => {
         })
     );
 });
+
+app.post("/api/users", (req, res) => {
+    const { name, email, password } = req.body;
+    User.findOne({ email }).then((data) => {
+        if (!data) {
+            const user = new User({ name, email, password });
+            user.save()
+                .then((arg1, arg2) => {
+                    res.json({ success: "user has successfully registered" });
+                })
+                .catch((err) => res.json({ err }));
+        } else {
+            res.json({ error: "user is alredy exist" });
+        }
+    });
+});
+
+// ##################################################################################################################
+app.get("/convert", (req, res) => {
+    const { url } = req.body;
+    fetch(url).then((result) => {
+        const contentType = result.headers.get("Content-Type");
+        result.arrayBuffer().then((buffer) => {
+            const base64 =
+                '<img src="data:image/jpeg;base64,' +
+                arrayBufferToBase64(buffer) +
+                '" data-filename="IMG_0329.JPG" style="width: 50%;">';
+            res.send(base64);
+        });
+    });
+});
+
+function arrayBufferToBase64(buffer) {
+    var binary = "";
+    var bytes = new Uint8Array(buffer);
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+}
+// ##################################################################################################################
 
 app.get("*", (req, res) => {
     res.sendFile(__dirname + "/client/build/index.html");

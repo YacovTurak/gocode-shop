@@ -143,16 +143,16 @@ app.post("/api/users", (req, res) => {
 });
 
 // ##################################################################################################################
-app.get("/api/convert", (req, res) => {
+app.post("/api/convert", (req, res) => {
     const { url } = req.body;
     fetch(url).then((result) => {
         const contentType = result.headers.get("Content-Type");
         result.arrayBuffer().then((buffer) => {
             const base64 =
-                '<img src="data:image/jpeg;base64,' +
-                arrayBufferToBase64(buffer) +
-                '" data-filename="IMG_0329.JPG" style="width: 50%;">';
-            res.send(base64);
+                "data:image/jpeg;base64," + arrayBufferToBase64(buffer);
+            const [part1, part2] = splitText(base64);
+            res.json({ part1, part2 });
+            // res.send(base64);
         });
     });
 });
@@ -165,6 +165,14 @@ function arrayBufferToBase64(buffer) {
         binary += String.fromCharCode(bytes[i]);
     }
     return Buffer.from(binary, "binary").toString("base64");
+}
+
+function splitText(text) {
+    const textLength = text.length;
+    const halfLength = Math.ceil(textLength / 2);
+    const firstHalf = text.slice(0, halfLength);
+    const secondHalf = text.slice(halfLength);
+    return [firstHalf, secondHalf];
 }
 // ##################################################################################################################
 

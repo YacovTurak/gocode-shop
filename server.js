@@ -1,8 +1,13 @@
 const express = require("express");
 const fs = require("fs");
 const mongoose = require("mongoose");
+// ########################################################################################
 const fetch = (...args) =>
     import("node-fetch").then(({ default: fetch }) => fetch(...args));
+const { Readable, PassThrough } = require("stream");
+const { promisify } = require("util");
+const streamToBuffer = promisify(require("stream").pipeline);
+// ########################################################################################
 
 require("dotenv").config();
 
@@ -143,6 +148,39 @@ app.post("/api/users", (req, res) => {
 });
 
 // ##################################################################################################################
+// app.post("/api/convert", async (req, res) => {
+//     const { url } = req.body;
+
+//     const result = await fetch(url);
+//     const contentType = result.headers.get("Content-Type");
+
+//     if (contentType && contentType.startsWith("image/")) {
+//         const base64 = await convertToBase64(result.body);
+//         const [part1, part2] = splitText(base64);
+
+//         console.log("TCL: part1", part1);
+//         console.log("TCL: part2", part2);
+
+//         res.json({ part1, part2 });
+//     } else {
+//         res.status(400).json({ error: "Invalid content type" });
+//     }
+// });
+
+// async function convertToBase64(readableStream) {
+//     let base64 = "data:image/jpeg;base64,";
+//     const buffer = await streamToBuffer(readableStream, new PassThrough());
+//     base64 += buffer.toString("base64");
+//     return base64;
+// }
+
+// function splitText(text) {
+//     const textLength = text.length;
+//     const firstHalf = text.slice(0, textLength - 3);
+//     const secondHalf = text.slice(textLength - 3);
+//     return [firstHalf, secondHalf];
+// }
+
 app.post("/api/convert", (req, res) => {
     const { url } = req.body;
     fetch(url).then((result) => {
@@ -150,10 +188,10 @@ app.post("/api/convert", (req, res) => {
         result.arrayBuffer().then((buffer) => {
             const base64 =
                 "data:image/jpeg;base64," + arrayBufferToBase64(buffer);
-            const [part1, part2] = splitText(base64);
+            const [part1, part2, textLength] = splitText(base64);
             console.log("TCL: part1", part1);
             console.log("TCL: part2", part2);
-            res.json({ part1, part2 });
+            res.json({ part1, part2, textLength });
             // res.send(base64);
         });
     });
@@ -174,7 +212,7 @@ function splitText(text) {
     // const halfLength = Math.ceil(textLength / 2);
     const firstHalf = text.slice(0, textLength - 3);
     const secondHalf = text.slice(textLength - 3);
-    return [firstHalf, secondHalf];
+    return [firstHalf, secondHalf, textLength];
 }
 // ##################################################################################################################
 

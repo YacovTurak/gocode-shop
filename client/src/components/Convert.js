@@ -58,6 +58,7 @@ export default function Convert() {
             response.json().then((srcbb) => {
                 console.log(srcbb.part1);
                 console.log(srcbb.part2);
+                console.log("textLength", srcbb.textLength);
                 const fullSrc = srcbb.part1 + srcbb.part2;
                 console.log('<img src="' + fullSrc + '">');
                 setLoading(false);

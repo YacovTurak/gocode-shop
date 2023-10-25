@@ -1,6 +1,8 @@
 const express = require("express");
 const fs = require("fs");
 const mongoose = require("mongoose");
+const fetch = (...args) =>
+    import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
 require("dotenv").config();
 

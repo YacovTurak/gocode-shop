@@ -57,15 +57,9 @@ export default function Convert() {
         }).then((response) => {
             response.json().then((src) => {
                 setLoading(false);
-                const fullSrc =
-                    src.part1.replaceAll("'", '"') +
-                    src.part2.replaceAll("'", '"');
-                console.log("TCL: sendHandle -> fullSrc", fullSrc);
                 setImage({
                     ...image,
-                    src:
-                        src.part1.replaceAll("'", '"') +
-                        src.part2.replaceAll("'", '"'),
+                    src: src.part1 + src.part2,
                 });
             });
         });

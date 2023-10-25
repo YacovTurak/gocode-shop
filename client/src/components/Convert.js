@@ -59,7 +59,7 @@ export default function Convert() {
                 console.log(srcbb.part1);
                 console.log(srcbb.part2);
                 const fullSrc = srcbb.part1 + srcbb.part2;
-                console.log("TCL: sendHandle -> fullSrc", fullSrc);
+                console.log('<img src="' + fullSrc + '">');
                 setLoading(false);
                 setImage({
                     ...image,

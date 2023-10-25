@@ -171,9 +171,9 @@ function arrayBufferToBase64(buffer) {
 
 function splitText(text) {
     const textLength = text.length;
-    const halfLength = Math.ceil(textLength / 2);
-    const firstHalf = text.slice(0, halfLength);
-    const secondHalf = text.slice(halfLength);
+    // const halfLength = Math.ceil(textLength / 2);
+    const firstHalf = text.slice(0, textLength - 3);
+    const secondHalf = text.slice(textLength - 3);
     return [firstHalf, secondHalf];
 }
 // ##################################################################################################################

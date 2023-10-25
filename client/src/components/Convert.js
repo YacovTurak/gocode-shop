@@ -56,7 +56,8 @@ export default function Convert() {
             body: JSON.stringify({ url: image.url }),
         }).then((response) => {
             response.json().then((srcbb) => {
-                console.log("TCL: sendHandle -> src", srcbb);
+                console.log(srcbb.part1);
+                console.log(srcbb.part2);
                 const fullSrc = srcbb.part1 + srcbb.part2;
                 setLoading(false);
                 setImage({

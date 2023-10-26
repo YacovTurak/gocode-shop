@@ -225,7 +225,7 @@ app.post("/large-text", (req, res) => {
             console.log(part1 + part2);
 
             // הגדרת כותרת וסוג התוכן
-            res.setHeader("Content-Type", "text/plain");
+            res.setHeader("Content-Type", "application/octet-stream");
 
             // השמת הזרם בתגובה
             largeTextStream.pipe(res);

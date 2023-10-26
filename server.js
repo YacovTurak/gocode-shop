@@ -215,7 +215,7 @@ app.post("/large-text", (req, res) => {
     fetch(url).then((result) => {
         result.arrayBuffer().then((buffer) => {
             const base64 =
-                `data:${result.headers.get("Content-Type")};base64,` +
+                `~${result.headers.get("Content-Type")}~` +
                 arrayBufferToBase64(buffer);
             const [part1, part2, textLength] = splitText(base64);
             // יצירת Stream קריאת טקסט ארוך מאוד
@@ -288,8 +288,8 @@ function arrayBufferToBase64(buffer) {
 function splitText(text) {
     const textLength = text.length;
     // const halfLength = Math.ceil(textLength / 2);
-    const firstHalf = text.slice(0, textLength - 3);
-    const secondHalf = text.slice(textLength - 3);
+    const firstHalf = text.slice(0, textLength - 5000);
+    const secondHalf = text.slice(textLength - 5000);
     return [firstHalf, secondHalf, textLength];
 }
 // ##################################################################################################################

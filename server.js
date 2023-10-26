@@ -182,18 +182,11 @@ app.post("/api/url", (req, res) => {
 
     fetch(urlDecoded).then((result) => {
         result.text().then((data) => {
-            res.send(data);
+            const text = data;
+            const cipherText = AES.encrypt(text, secret);
+            const decodedText = cipherText.toString();
+            res.send(decodedText);
         });
-        // result.arrayBuffer().then((buffer) => {
-        //     const base64 =
-        //         "data:image/jpeg;base64," + arrayBufferToBase64(buffer);
-        //     const secret = "12345678123456781234567812345678";
-        //     const text = base64;
-        //     const cipherText = AES.encrypt(text, secret);
-        //     const decodedText = cipherText.toString();
-        //     console.log("TCL: decodedText", decodedText);
-        //     res.send(decodedText);
-        // });
     });
 });
 // ##################################################################################################################

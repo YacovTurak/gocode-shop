@@ -99,15 +99,13 @@ export default function Convert() {
             body: JSON.stringify({ url: decodedText }),
         }).then((response) => {
             response.text().then((data) => {
-                // const secret = "12345678123456781234567812345678";
-                // const code = data;
-                // const bytes = AES.decrypt(code, secret);
-                // const decrypted = bytes.toString(enc.Utf8);
-                // console.log(decrypted);
+                const code = data;
+                const bytes = AES.decrypt(code, secret);
+                const decrypted = bytes.toString(enc.Utf8);
                 setLoadingDocument(false);
                 setImage({
                     ...image,
-                    html: data,
+                    html: decrypted,
                 });
             });
         });

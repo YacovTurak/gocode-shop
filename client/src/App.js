@@ -10,7 +10,7 @@ import AddProduct from "./components/views/AddProduct/AddProduct";
 import MuiAlert from "@mui/material/Alert";
 import { Snackbar } from "@mui/material";
 import Navbar from "./components/views/Navbar.js";
-import Convert from "./components/Convert";
+import Convert from "./components/Convert/Convert";
 
 const Alert = forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;

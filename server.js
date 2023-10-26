@@ -4,15 +4,6 @@ const mongoose = require("mongoose");
 // ########################################################################################
 const fetch = (...args) =>
     import("node-fetch").then(({ default: fetch }) => fetch(...args));
-// const { Readable, PassThrough } = require("stream");
-// const { promisify } = require("util");
-// const streamToBuffer = promisify(require("stream").pipeline);
-// const SplitStream = require("./splitStream");
-// const stream = require("stream");
-
-// const crypto = require("crypto");
-// const { encrypt } = require("./crypto");
-
 const { AES, enc } = require("crypto-js");
 // ########################################################################################
 
@@ -155,57 +146,6 @@ app.post("/api/users", (req, res) => {
 });
 
 // ##################################################################################################################
-// app.post("/api/convert", async (req, res) => {
-//     const { url } = req.body;
-
-//     const result = await fetch(url);
-//     const contentType = result.headers.get("Content-Type");
-
-//     if (contentType && contentType.startsWith("image/")) {
-//         const base64 = await convertToBase64(result.body);
-//         const [part1, part2] = splitText(base64);
-
-//         console.log("TCL: part1", part1);
-//         console.log("TCL: part2", part2);
-
-//         res.json({ part1, part2 });
-//     } else {
-//         res.status(400).json({ error: "Invalid content type" });
-//     }
-// });
-
-// async function convertToBase64(readableStream) {
-//     let base64 = "data:image/jpeg;base64,";
-//     const buffer = await streamToBuffer(readableStream, new PassThrough());
-//     base64 += buffer.toString("base64");
-//     return base64;
-// }
-
-// function splitText(text) {
-//     const textLength = text.length;
-//     const firstHalf = text.slice(0, textLength - 3);
-//     const secondHalf = text.slice(textLength - 3);
-//     return [firstHalf, secondHalf];
-// }
-
-// const secretKey = "המפתח_הסודי_שלך";
-// const iv = crypto.randomBytes(16);
-// console.log("TCL: iv", iv);
-
-// function encrypt(data) {
-//     const cipher = crypto.createCipheriv("aes-256-cbc", secretKey, null);
-//     let encrypted = cipher.update(data, "utf-8", "hex");
-//     encrypted += cipher.final("hex");
-//     return encrypted;
-// }
-
-// function decrypt(data) {
-//     const decipher = crypto.createCipheriv("aes-256-cbc", secretKey, iv);
-//     let decrypted = decipher.update(data, "hex", "utf-8");
-//     decrypted += decipher.final("utf-8");
-//     return decrypted;
-// }
-
 app.post("/api/convert", (req, res) => {
     const { url } = req.body;
     fetch(url).then((result) => {
@@ -213,100 +153,14 @@ app.post("/api/convert", (req, res) => {
             const base64 =
                 "data:image/jpeg;base64," + arrayBufferToBase64(buffer);
             const secret = "12345678123456781234567812345678";
-            // const text = "hello";
             const text = base64;
             const cipherText = AES.encrypt(text, secret);
             const decodedText = cipherText.toString();
             console.log("TCL: decodedText", decodedText);
             res.send(decodedText);
-
-            // const encryptData = encrypt(base64);
-            // res.send(encryptData);
-            // const [part1, part2, textLength] = splitText(base64);
-
-            // const contentType = result.headers.get("Content-Type");
-            // const textToSplit = part1 + "~" + part2 + "~" + textLength; // שים את הטקסט כאן
-            // const textStream = new stream.PassThrough();
-            // const longTextStream = new stream.PassThrough();
-            // const splitStream = new SplitStream();
-
-            // textStream.pipe(splitStream);
-            // longTextStream.pipe(splitStream);
-
-            // // שלח את הטקסט לצד הלקוח
-            // result.body.pipe(textStream);
-            // result.body.pipe(longTextStream);
-
-            // res.setHeader("Content-Type", "application/json");
-            // res.json({ text: textStream, longText: longTextStream });
         });
     });
 });
-
-// app.post("/large-text", (req, res) => {
-//     const { url } = req.body;
-//     fetch(url).then((result) => {
-//         result.arrayBuffer().then((buffer) => {
-//             const base64 =
-//                 `~${result.headers.get("Content-Type")}~` +
-//                 arrayBufferToBase64(buffer);
-//             const [part1, part2, textLength] = splitText(base64);
-//             // יצירת Stream קריאת טקסט ארוך מאוד
-//             const largeTextStream = createLargeTextStream(
-//                 part1 + "~" + part2 + "~" + textLength
-//             );
-//             console.log(part1 + part2);
-
-//             // הגדרת כותרת וסוג התוכן
-//             res.setHeader("Content-Type", "application/octet-stream");
-
-//             // השמת הזרם בתגובה
-//             largeTextStream.pipe(res);
-//         });
-//     });
-// });
-
-// // פונקציה שיצרתי לדוגמה ליצירת Stream טקסט
-// function createLargeTextStream(largeText) {
-//     const Readable = require("stream").Readable;
-//     const textStream = new Readable();
-
-//     // יצירת טקסט ארוך מאוד
-//     // const largeText =
-//     //     "זהו טקסט ארוך מאוד שיכול להיות מאות מילים או אפילו יותר. זהו דוגמה לשימוש ב-Stream ב-Express.";
-
-//     // הגדרת הפונקציה _read
-//     textStream._read = function () {
-//         if (largeText.length === 0) {
-//             // סיום הזרימה
-//             this.push(null);
-//         } else {
-//             // קריאת חלק קטן מהטקסט והוספתו לזרם
-//             const chunk = largeText.slice(0, 10); // קוראים 10 תווים בכל פעם
-//             largeText = largeText.slice(10); // מעדכנים את הטקסט הנותר
-//             this.push(chunk);
-//         }
-//     };
-
-//     return textStream;
-// }
-// app.post("/api/convert", (req, res) => {
-//     const { url } = req.body;
-//     fetch(url).then((result) => {
-//         const contentType = result.headers.get("Content-Type");
-//         result.arrayBuffer().then((buffer) => {
-//             const base64 =
-//                 "data:image/jpeg;base64," + arrayBufferToBase64(buffer);
-//             const [part1, part2, textLength] = splitText(base64);
-//             console.log("TCL: part1", part1);
-//             console.log("TCL: part2", part2);
-//             console.log("TCL: textLength", textLength);
-//             // res.json({ part1, part2, textLength });
-//             res.send(part1 + "~" + part2 + "~" + textLength);
-//             // res.send(base64);
-//         });
-//     });
-// });
 
 function arrayBufferToBase64(buffer) {
     var binary = "";
@@ -318,18 +172,10 @@ function arrayBufferToBase64(buffer) {
     return Buffer.from(binary, "binary").toString("base64");
 }
 
-// function splitText(text) {
-//     const textLength = text.length;
-//     // const halfLength = Math.ceil(textLength / 2);
-//     const firstHalf = text.slice(0, textLength - 5000);
-//     const secondHalf = text.slice(textLength - 5000);
-//     return [firstHalf, secondHalf, textLength];
-// }
-// ##################################################################################################################
-
 app.get("*", (req, res) => {
     res.sendFile(__dirname + "/client/build/index.html");
 });
+// ##################################################################################################################
 
 const initProducts = () => {
     Product.findOne({}).then((err, product) => {

@@ -1,25 +1,9 @@
-import { useEffect, useState } from "react";
-import {
-    Autocomplete,
-    Box,
-    Button,
-    MenuItem,
-    TextField,
-    toggleButtonClasses,
-} from "@mui/material";
+import { useState } from "react";
+import { TextField, toggleButtonClasses } from "@mui/material";
 import { buttonClasses } from "@mui/material/Button";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { AES, enc } from "crypto-js";
-
-// const { decrypt } = require("./crypto1");
-// const crypto = require("crypto");
-
-// const mykey = crypto.createDecipher("aes-128-cbc", "mypassword");
-// let mystr = mykey.update("34feb914c099df25794bf9ccb85bea72", "hex", "utf8");
-// mystr += mykey.final("utf8");
-
-// console.log(mystr);
 
 export default function Convert() {
     const [image, setImage] = useState({});
@@ -55,7 +39,9 @@ export default function Convert() {
     });
 
     const sendHandle = () => {
-        console.log(JSON.stringify({ url: image.url }));
+        if (image.password !== "81550") {
+            return;
+        }
         setLoading(true);
         fetch("/api/convert", {
             method: "POST",
@@ -65,30 +51,17 @@ export default function Convert() {
             },
             body: JSON.stringify({ url: image.url }),
         }).then((response) => {
-            // setImage({ ...image, srcaa: response });
-            response.text().then((res) => {
+            response.text().then((data) => {
                 const secret = "12345678123456781234567812345678";
-                // const code = "U2FsdGVkX1/3jQRuyaXyKQjpzEQ38ub6Dm6ZJ9aFrqM=";
-                const code = res;
+                const code = data;
                 const bytes = AES.decrypt(code, secret);
-                console.log("bytes", bytes);
                 const decrypted = bytes.toString(enc.Utf8);
-                console.log("decrypted", decrypted);
-
-                // const data = decrypt(res);
-                // console.log("TCL: sendHandle -> data", data);
+                setLoading(false);
+                setImage({
+                    ...image,
+                    src: decrypted,
+                });
             });
-            //     console.log(srcbb.part1);
-            //     console.log(srcbb.part2);
-            //     console.log("textLength", srcbb.textLength);
-            //     const fullSrc = srcbb.part1 + srcbb.part2;
-            //     console.log('<img src="' + fullSrc + '">');
-            //     setLoading(false);
-            //     setImage({
-            //         ...image,
-            //         srcaa: fullSrc,
-            //     });
-            // });
         });
     };
 
@@ -100,10 +73,19 @@ export default function Convert() {
                 // sx={{ minWidth: "750px" }}
                 value={image.url}
                 onChange={(e) => {
-                    setImage({ ...image, url: e.target.value });
+                    setImage({ ...image, url: e.target.value, src: "" });
                 }}
             />
-            <textarea value={image.src} />
+            <TextField
+                label="Title"
+                fullWidth
+                // sx={{ minWidth: "750px" }}
+                type="password"
+                value={image.password}
+                onChange={(e) => {
+                    setImage({ ...image, password: e.target.value });
+                }}
+            />
             <ThemeProvider theme={LoadingButtonTheme}>
                 <LoadingButton
                     onClick={sendHandle}
@@ -114,7 +96,7 @@ export default function Convert() {
                     <span>Save</span>
                 </LoadingButton>
             </ThemeProvider>
-            <img key="1" src={image.srcaa} alt="" />
+            <img key="1" src={image.src} alt="" />
         </div>
     );
 }

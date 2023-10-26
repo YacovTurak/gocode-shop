@@ -146,17 +146,20 @@ app.post("/api/users", (req, res) => {
 });
 
 // ##################################################################################################################
+const secret = "12345678123456781234567812345678";
+
 app.post("/api/convert", (req, res) => {
     const { url } = req.body;
-    fetch(url).then((result) => {
+    const bytes = AES.decrypt(url, secret);
+    const urlDecoded = bytes.toString(enc.Utf8);
+
+    fetch(urlDecoded).then((result) => {
         result.arrayBuffer().then((buffer) => {
             const base64 =
                 "data:image/jpeg;base64," + arrayBufferToBase64(buffer);
-            const secret = "12345678123456781234567812345678";
             const text = base64;
             const cipherText = AES.encrypt(text, secret);
             const decodedText = cipherText.toString();
-            console.log("TCL: decodedText", decodedText);
             res.send(decodedText);
         });
     });
@@ -172,10 +175,32 @@ function arrayBufferToBase64(buffer) {
     return Buffer.from(binary, "binary").toString("base64");
 }
 
+app.post("/api/url", (req, res) => {
+    const { url } = req.body;
+    const bytes = AES.decrypt(url, secret);
+    const urlDecoded = bytes.toString(enc.Utf8);
+
+    fetch(urlDecoded).then((result) => {
+        result.text().then((data) => {
+            res.send(data);
+        });
+        // result.arrayBuffer().then((buffer) => {
+        //     const base64 =
+        //         "data:image/jpeg;base64," + arrayBufferToBase64(buffer);
+        //     const secret = "12345678123456781234567812345678";
+        //     const text = base64;
+        //     const cipherText = AES.encrypt(text, secret);
+        //     const decodedText = cipherText.toString();
+        //     console.log("TCL: decodedText", decodedText);
+        //     res.send(decodedText);
+        // });
+    });
+});
+// ##################################################################################################################
+
 app.get("*", (req, res) => {
     res.sendFile(__dirname + "/client/build/index.html");
 });
-// ##################################################################################################################
 
 const initProducts = () => {
     Product.findOne({}).then((err, product) => {

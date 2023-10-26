@@ -192,7 +192,8 @@ app.post("/api/convert", (req, res) => {
             console.log("TCL: part1", part1);
             console.log("TCL: part2", part2);
             console.log("TCL: textLength", textLength);
-            res.json({ part1, part2, textLength });
+            // res.json({ part1, part2, textLength });
+            res.send(part1 + "~" + part2 + "~" + textLength);
             // res.send(base64);
         });
     });

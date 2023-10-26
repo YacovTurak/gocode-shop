@@ -222,6 +222,7 @@ app.post("/large-text", (req, res) => {
             const largeTextStream = createLargeTextStream(
                 part1 + "~" + part2 + "~" + textLength
             );
+            console.log(part1 + part2);
 
             // הגדרת כותרת וסוג התוכן
             res.setHeader("Content-Type", "text/plain");

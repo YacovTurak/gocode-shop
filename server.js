@@ -202,10 +202,12 @@ async function replaceSrcs(html) {
     // אם הבקשה הצליחה, קרא את התוכן כטקסט
     //   const html = await response.text();
     const $ = cheerio.load(html);
+    console.log("TCL: replaceSrcs -> html", html);
 
     // עבור כל תמונה בדף
     $("img").each(async (index, element) => {
         const imgSrc = $(element).attr("src");
+        console.log("TCL: replaceSrcs -> imgSrc", imgSrc);
 
         if (imgSrc) {
             if (imgSrc.startsWith("http")) {
@@ -214,11 +216,15 @@ async function replaceSrcs(html) {
 
                 if (imgResponse.ok) {
                     const imgBuffer = await imgResponse.arrayBuffer(); // קרא את תוכן התמונה כ-buffer
+                    console.log("TCL: replaceSrcs -> imgBuffer", imgBuffer);
                     const imgBase64 = imgBuffer.toString("base64");
+                    console.log("TCL: replaceSrcs -> imgBase64", imgBase64);
                     const imgMime = imgResponse.headers.get("content-type");
+                    console.log("TCL: replaceSrcs -> imgMime", imgMime);
 
                     // בנה Data URI מהתוכן וה-MIME type
                     const dataUri = `data:${imgMime};base64,${imgBase64}`;
+                    console.log("TCL: replaceSrcs -> dataUri", dataUri);
 
                     // שנה את ה-attribut src של התמונה ל-Data URI
                     $(element).attr("src", dataUri);
@@ -230,7 +236,6 @@ async function replaceSrcs(html) {
     // כתוב את ה-HTML המעודכן לקובץ או הצג אותו
     //   console.log($.html());
     const returnHtml = $.html();
-    console.log("returnHtml", returnHtml);
     return returnHtml;
     // } else {
     //   console.error('Failed to fetch the URL');

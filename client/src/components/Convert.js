@@ -102,6 +102,7 @@ export default function Convert() {
                 const code = data;
                 const bytes = AES.decrypt(code, secret);
                 const decrypted = bytes.toString(enc.Utf8);
+                console.log(decrypted);
                 setLoadingDocument(false);
                 setImage({
                     ...image,

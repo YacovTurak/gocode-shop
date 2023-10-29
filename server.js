@@ -212,7 +212,7 @@ async function replaceSrcs(html) {
                 // שלח בקשת fetch לכתובת של התמונה
                 const imgResponse = await fetch(imgSrc);
                 if (imgResponse.ok) {
-                    const imgBuffer = await imgResponse.buffer(); // קרא את תוכן התמונה כ-buffer
+                    const imgBuffer = await imgResponse.arrayBuffer(); // קרא את תוכן התמונה כ-buffer
                     const imgBase64 = imgBuffer.toString("base64");
                     const imgMime = imgResponse.headers.get("content-type");
 

@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const fetch = (...args) =>
     import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const { AES, enc } = require("crypto-js");
+// html מנתח
+const cheerio = require("cheerio");
 // ########################################################################################
 
 require("dotenv").config();
@@ -182,13 +184,52 @@ app.post("/api/url", (req, res) => {
 
     fetch(urlDecoded).then((result) => {
         result.text().then((data) => {
-            const text = data;
+            replaceSrcs(data).then(htmlStr);
+            const text = htmlStr;
             const cipherText = AES.encrypt(text, secret);
             const decodedText = cipherText.toString();
             res.send(decodedText);
         });
     });
 });
+
+async function replaceSrcs(html) {
+    // שלח בקשת fetch לכתובת ה-URL
+    // const response = await fetch(url);
+
+    // if (response.ok) {
+    // אם הבקשה הצליחה, קרא את התוכן כטקסט
+    //   const html = await response.text();
+    const $ = cheerio.load(html);
+
+    // עבור כל תמונה בדף
+    $("img").each(async (index, element) => {
+        const imgSrc = $(element).attr("src");
+
+        if (imgSrc) {
+            // שלח בקשת fetch לכתובת של התמונה
+            const imgResponse = await fetch(imgSrc);
+            if (imgResponse.ok) {
+                const imgBuffer = await imgResponse.buffer(); // קרא את תוכן התמונה כ-buffer
+                const imgBase64 = imgBuffer.toString("base64");
+                const imgMime = imgResponse.headers.get("content-type");
+
+                // בנה Data URI מהתוכן וה-MIME type
+                const dataUri = `data:${imgMime};base64,${imgBase64}`;
+
+                // שנה את ה-attribut src של התמונה ל-Data URI
+                $(element).attr("src", dataUri);
+            }
+        }
+    });
+
+    // כתוב את ה-HTML המעודכן לקובץ או הצג אותו
+    //   console.log($.html());
+    return $.html();
+    // } else {
+    //   console.error('Failed to fetch the URL');
+    // }
+}
 // ##################################################################################################################
 
 app.get("*", (req, res) => {

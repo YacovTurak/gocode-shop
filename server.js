@@ -210,10 +210,9 @@ async function replaceSrcs(html) {
         if (imgSrc) {
             if (imgSrc.startsWith("http")) {
                 fetch(imgSrc).then((result) => {
-                    result.arrayBuffer().then((buffer) => {
-                        const base64 =
-                            "data:image/jpeg;base64," +
-                            arrayBufferToBase64(buffer);
+                    result.arrayBuffer().then(() => {
+                        const base64 = await;
+                        "data:image/jpeg;base64," + arrayBufferToBase64(buffer);
                         const imgMime = result.headers.get("content-type");
                         console.log("TCL: replaceSrcs -> imgMime", imgMime);
 
@@ -239,7 +238,7 @@ async function replaceSrcs(html) {
 
     // כתוב את ה-HTML המעודכן לקובץ או הצג אותו
     //   console.log($.html());
-    const returnHtml = $.html();
+    const returnHtml = await $.html();
     return returnHtml;
     // } else {
     //   console.error('Failed to fetch the URL');

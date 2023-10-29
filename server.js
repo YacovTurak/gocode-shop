@@ -211,8 +211,9 @@ async function replaceSrcs(html) {
             if (imgSrc.startsWith("http")) {
                 fetch(imgSrc).then((result) => {
                     result.arrayBuffer().then(() => {
-                        const base64 = await;
-                        "data:image/jpeg;base64," + arrayBufferToBase64(buffer);
+                        const base64 =
+                            "data:image/jpeg;base64," +
+                            arrayBufferToBase64(buffer);
                         const imgMime = result.headers.get("content-type");
                         console.log("TCL: replaceSrcs -> imgMime", imgMime);
 

@@ -214,7 +214,7 @@ async function replaceSrcs(html) {
                         const base64 =
                             "data:image/jpeg;base64," +
                             arrayBufferToBase64(buffer);
-                        const imgMime = result.headers("content-type");
+                        const imgMime = result.headers.get("content-type");
                         console.log("TCL: replaceSrcs -> imgMime", imgMime);
 
                         // // שלח בקשת fetch לכתובת של התמונה

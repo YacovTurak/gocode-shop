@@ -157,8 +157,11 @@ app.post("/api/convert", (req, res) => {
 
     fetch(urlDecoded).then((result) => {
         result.arrayBuffer().then((buffer) => {
-            const base64 =
-                "data:image/jpeg;base64," + arrayBufferToBase64(buffer);
+            const typeImg = result.headers.get("Content-type");
+            const base64 = `data:${typeImg};base64,${arrayBufferToBase64(
+                buffer
+            )}`;
+            console.log("TCL: typeImg", typeImg);
             const text = base64;
             const cipherText = AES.encrypt(text, secret);
             const decodedText = cipherText.toString();
@@ -211,31 +214,46 @@ async function replaceSrcs(html) {
             if (imgSrc.startsWith("http")) {
                 fetch(imgSrc).then((result) => {
                     result.arrayBuffer().then((buffer) => {
-                        const Base64 =
-                            "data:image/jpeg;base64," +
-                            arrayBufferToBase64(buffer);
-                        const imgMime = result.headers.get("content-type");
-                        console.log("TCL: replaceSrcs -> imgMime", imgMime);
-
-                        // // שלח בקשת fetch לכתובת של התמונה
-                        // const imgResponse = await fetch(imgSrc);
-
-                        // if (imgResponse.ok) {
-                        //     const imgBuffer = await imgResponse.arrayBuffer(); // קרא את תוכן התמונה כ-buffer
-                        //     const imgBase64 = imgBuffer.toString("base64");
-                        //     const imgMime = imgResponse.headers.get("content-type");
-
-                        // בנה Data URI מהתוכן וה-MIME type
-                        // const dataUri = `data:${imgMime};base64,${imgBase64}`;
-                        const dataUri = `data:${imgMime};base64,${Base64}`;
-
-                        // שנה את ה-attribut src של התמונה ל-Data URI
-                        $(element).attr("src", dataUri);
+                        const typeImg = result.headers.get("Content-type");
+                        const base64 = `data:${typeImg};base64,${arrayBufferToBase64(
+                            buffer
+                        )}`;
+                        $(element).attr("src", base64);
                     });
                 });
             }
         }
     });
+
+    //     if (imgSrc) {
+    //         if (imgSrc.startsWith("http")) {
+    //             fetch(imgSrc).then((result) => {
+    //                 result.arrayBuffer().then((buffer) => {
+    //                     const Base64 =
+    //                         "data:image/jpeg;base64," +
+    //                         arrayBufferToBase64(buffer);
+    //                     const imgMime = result.headers.get("content-type");
+    //                     console.log("TCL: replaceSrcs -> imgMime", imgMime);
+
+    //                     // // שלח בקשת fetch לכתובת של התמונה
+    //                     // const imgResponse = await fetch(imgSrc);
+
+    //                     // if (imgResponse.ok) {
+    //                     //     const imgBuffer = await imgResponse.arrayBuffer(); // קרא את תוכן התמונה כ-buffer
+    //                     //     const imgBase64 = imgBuffer.toString("base64");
+    //                     //     const imgMime = imgResponse.headers.get("content-type");
+
+    //                     // בנה Data URI מהתוכן וה-MIME type
+    //                     // const dataUri = `data:${imgMime};base64,${imgBase64}`;
+    //                     const dataUri = `data:${imgMime};base64,${Base64}`;
+
+    //                     // שנה את ה-attribut src של התמונה ל-Data URI
+    //                     $(element).attr("src", dataUri);
+    //                 });
+    //             });
+    //         }
+    //     }
+    // });
 
     // כתוב את ה-HTML המעודכן לקובץ או הצג אותו
     //   console.log($.html());

@@ -184,11 +184,12 @@ app.post("/api/url", (req, res) => {
 
     fetch(urlDecoded).then((result) => {
         result.text().then((data) => {
-            replaceSrcs(data).then(htmlStr);
-            const text = htmlStr;
-            const cipherText = AES.encrypt(text, secret);
-            const decodedText = cipherText.toString();
-            res.send(decodedText);
+            replaceSrcs(data).then((htmlStr) => {
+                const text = htmlStr;
+                const cipherText = AES.encrypt(text, secret);
+                const decodedText = cipherText.toString();
+                res.send(decodedText);
+            });
         });
     });
 });

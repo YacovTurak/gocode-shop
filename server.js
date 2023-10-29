@@ -202,33 +202,37 @@ async function replaceSrcs(html) {
     // אם הבקשה הצליחה, קרא את התוכן כטקסט
     //   const html = await response.text();
     const $ = cheerio.load(html);
-    console.log("TCL: replaceSrcs -> html", html);
 
     // עבור כל תמונה בדף
     $("img").each(async (index, element) => {
         const imgSrc = $(element).attr("src");
-        console.log("TCL: replaceSrcs -> imgSrc", imgSrc);
 
         if (imgSrc) {
             if (imgSrc.startsWith("http")) {
-                // שלח בקשת fetch לכתובת של התמונה
-                const imgResponse = await fetch(imgSrc);
+                fetch(imgSrc).then((result) => {
+                    result.arrayBuffer().then((buffer) => {
+                        const base64 =
+                            "data:image/jpeg;base64," +
+                            arrayBufferToBase64(buffer);
+                        const imgMime = result.headers("content-type");
+                        console.log("TCL: replaceSrcs -> imgMime", imgMime);
 
-                if (imgResponse.ok) {
-                    const imgBuffer = await imgResponse.arrayBuffer(); // קרא את תוכן התמונה כ-buffer
-                    console.log("TCL: replaceSrcs -> imgBuffer", imgBuffer);
-                    const imgBase64 = imgBuffer.toString("base64");
-                    console.log("TCL: replaceSrcs -> imgBase64", imgBase64);
-                    const imgMime = imgResponse.headers.get("content-type");
-                    console.log("TCL: replaceSrcs -> imgMime", imgMime);
+                        // // שלח בקשת fetch לכתובת של התמונה
+                        // const imgResponse = await fetch(imgSrc);
 
-                    // בנה Data URI מהתוכן וה-MIME type
-                    const dataUri = `data:${imgMime};base64,${imgBase64}`;
-                    console.log("TCL: replaceSrcs -> dataUri", dataUri);
+                        // if (imgResponse.ok) {
+                        //     const imgBuffer = await imgResponse.arrayBuffer(); // קרא את תוכן התמונה כ-buffer
+                        //     const imgBase64 = imgBuffer.toString("base64");
+                        //     const imgMime = imgResponse.headers.get("content-type");
 
-                    // שנה את ה-attribut src של התמונה ל-Data URI
-                    $(element).attr("src", dataUri);
-                }
+                        // בנה Data URI מהתוכן וה-MIME type
+                        // const dataUri = `data:${imgMime};base64,${imgBase64}`;
+                        const dataUri = `data:${imgMime};base64,${Base64}`;
+
+                        // שנה את ה-attribut src של התמונה ל-Data URI
+                        $(element).attr("src", dataUri);
+                    });
+                });
             }
         }
     });

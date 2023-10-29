@@ -207,7 +207,7 @@ async function replaceSrcs(html) {
     const $ = cheerio.load(html);
 
     // עבור כל תמונה בדף
-    $("img").each(async (index, element) => {
+    $("img").each((index, element) => {
         const imgSrc = $(element).attr("src");
 
         if (imgSrc) {
@@ -257,7 +257,7 @@ async function replaceSrcs(html) {
 
     // כתוב את ה-HTML המעודכן לקובץ או הצג אותו
     //   console.log($.html());
-    const returnHtml = await $.html();
+    const returnHtml = $.html();
     return returnHtml;
     // } else {
     //   console.error('Failed to fetch the URL');

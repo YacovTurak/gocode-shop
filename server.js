@@ -185,7 +185,6 @@ app.post("/api/url", (req, res) => {
     fetch(urlDecoded).then((result) => {
         result.text().then((data) => {
             replaceSrcs(data).then((htmlStr) => {
-                const ap = 1;
                 const text = htmlStr;
                 const cipherText = AES.encrypt(text, secret);
                 const decodedText = cipherText.toString();
@@ -209,18 +208,20 @@ async function replaceSrcs(html) {
         const imgSrc = $(element).attr("src");
 
         if (imgSrc) {
-            // שלח בקשת fetch לכתובת של התמונה
-            const imgResponse = await fetch(imgSrc);
-            if (imgResponse.ok) {
-                const imgBuffer = await imgResponse.buffer(); // קרא את תוכן התמונה כ-buffer
-                const imgBase64 = imgBuffer.toString("base64");
-                const imgMime = imgResponse.headers.get("content-type");
+            if (imgSrc.startsWith("http")) {
+                // שלח בקשת fetch לכתובת של התמונה
+                const imgResponse = await fetch(imgSrc);
+                if (imgResponse.ok) {
+                    const imgBuffer = await imgResponse.buffer(); // קרא את תוכן התמונה כ-buffer
+                    const imgBase64 = imgBuffer.toString("base64");
+                    const imgMime = imgResponse.headers.get("content-type");
 
-                // בנה Data URI מהתוכן וה-MIME type
-                const dataUri = `data:${imgMime};base64,${imgBase64}`;
+                    // בנה Data URI מהתוכן וה-MIME type
+                    const dataUri = `data:${imgMime};base64,${imgBase64}`;
 
-                // שנה את ה-attribut src של התמונה ל-Data URI
-                $(element).attr("src", dataUri);
+                    // שנה את ה-attribut src של התמונה ל-Data URI
+                    $(element).attr("src", dataUri);
+                }
             }
         }
     });

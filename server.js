@@ -206,21 +206,31 @@ async function replaceSrcs(html) {
     // עבור כל תמונה בדף
     $("img").each(async (index, element) => {
         const imgSrc = $(element).attr("src");
+        console.log("TCL: replaceSrcs -> imgSrc", imgSrc);
 
         if (imgSrc) {
+            console.log(1);
             if (imgSrc.startsWith("http")) {
+                console.log(2);
                 // שלח בקשת fetch לכתובת של התמונה
                 const imgResponse = await fetch(imgSrc);
+                console.log(3);
                 if (imgResponse.ok) {
+                    console.log(4);
                     const imgBuffer = await imgResponse.arrayBuffer(); // קרא את תוכן התמונה כ-buffer
+                    console.log(5);
                     const imgBase64 = imgBuffer.toString("base64");
+                    console.log(6);
                     const imgMime = imgResponse.headers.get("content-type");
+                    console.log(7);
 
                     // בנה Data URI מהתוכן וה-MIME type
                     const dataUri = `data:${imgMime};base64,${imgBase64}`;
+                    console.log(8);
 
                     // שנה את ה-attribut src של התמונה ל-Data URI
                     $(element).attr("src", dataUri);
+                    console.log(9);
                 }
             }
         }

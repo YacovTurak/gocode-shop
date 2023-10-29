@@ -210,7 +210,7 @@ async function replaceSrcs(html) {
         if (imgSrc) {
             if (imgSrc.startsWith("http")) {
                 fetch(imgSrc).then((result) => {
-                    result.arrayBuffer().then(() => {
+                    result.arrayBuffer().then((buffer) => {
                         const base64 =
                             "data:image/jpeg;base64," +
                             arrayBufferToBase64(buffer);

@@ -1,13 +1,6 @@
 const express = require("express");
 const fs = require("fs");
 const mongoose = require("mongoose");
-// ########################################################################################
-const fetch = (...args) =>
-    import("node-fetch").then(({ default: fetch }) => fetch(...args));
-const { AES, enc } = require("crypto-js");
-// html מנתח
-const cheerio = require("cheerio");
-// ########################################################################################
 
 require("dotenv").config();
 
@@ -146,124 +139,6 @@ app.post("/api/users", (req, res) => {
         }
     });
 });
-
-// ##################################################################################################################
-const secret = "12345678123456781234567812345678";
-
-app.post("/api/convert", (req, res) => {
-    const { url } = req.body;
-    const bytes = AES.decrypt(url, secret);
-    const urlDecoded = bytes.toString(enc.Utf8);
-
-    fetch(urlDecoded).then((result) => {
-        result.arrayBuffer().then((buffer) => {
-            const typeImg = result.headers.get("Content-type");
-            const base64 = `data:${typeImg};base64,${arrayBufferToBase64(
-                buffer
-            )}`;
-            console.log("TCL: typeImg", typeImg);
-            const text = base64;
-            const cipherText = AES.encrypt(text, secret);
-            const decodedText = cipherText.toString();
-            res.send(decodedText);
-        });
-    });
-});
-
-function arrayBufferToBase64(buffer) {
-    var binary = "";
-    var bytes = new Uint8Array(buffer);
-    var len = bytes.byteLength;
-    for (var i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
-    }
-    return Buffer.from(binary, "binary").toString("base64");
-}
-
-app.post("/api/url", (req, res) => {
-    const { url } = req.body;
-    const bytes = AES.decrypt(url, secret);
-    const urlDecoded = bytes.toString(enc.Utf8);
-
-    fetch(urlDecoded).then((result) => {
-        result.text().then((data) => {
-            replaceSrcs(data).then((htmlStr) => {
-                const text = htmlStr;
-                const cipherText = AES.encrypt(text, secret);
-                const decodedText = cipherText.toString();
-                res.send(decodedText);
-            });
-        });
-    });
-});
-
-async function replaceSrcs(html) {
-    // שלח בקשת fetch לכתובת ה-URL
-    // const response = await fetch(url);
-
-    // if (response.ok) {
-    // אם הבקשה הצליחה, קרא את התוכן כטקסט
-    //   const html = await response.text();
-    const $ = cheerio.load(html);
-
-    // עבור כל תמונה בדף
-    $("img").each((index, element) => {
-        const imgSrc = $(element).attr("src");
-
-        if (imgSrc) {
-            if (imgSrc.startsWith("http")) {
-                fetch(imgSrc).then((result) => {
-                    result.arrayBuffer().then((buffer) => {
-                        const typeImg = result.headers.get("Content-type");
-                        const base64 = `data:${typeImg};base64,${arrayBufferToBase64(
-                            buffer
-                        )}`;
-                        $(element).attr("src", base64);
-                    });
-                });
-            }
-        }
-    });
-
-    //     if (imgSrc) {
-    //         if (imgSrc.startsWith("http")) {
-    //             fetch(imgSrc).then((result) => {
-    //                 result.arrayBuffer().then((buffer) => {
-    //                     const Base64 =
-    //                         "data:image/jpeg;base64," +
-    //                         arrayBufferToBase64(buffer);
-    //                     const imgMime = result.headers.get("content-type");
-    //                     console.log("TCL: replaceSrcs -> imgMime", imgMime);
-
-    //                     // // שלח בקשת fetch לכתובת של התמונה
-    //                     // const imgResponse = await fetch(imgSrc);
-
-    //                     // if (imgResponse.ok) {
-    //                     //     const imgBuffer = await imgResponse.arrayBuffer(); // קרא את תוכן התמונה כ-buffer
-    //                     //     const imgBase64 = imgBuffer.toString("base64");
-    //                     //     const imgMime = imgResponse.headers.get("content-type");
-
-    //                     // בנה Data URI מהתוכן וה-MIME type
-    //                     // const dataUri = `data:${imgMime};base64,${imgBase64}`;
-    //                     const dataUri = `data:${imgMime};base64,${Base64}`;
-
-    //                     // שנה את ה-attribut src של התמונה ל-Data URI
-    //                     $(element).attr("src", dataUri);
-    //                 });
-    //             });
-    //         }
-    //     }
-    // });
-
-    // כתוב את ה-HTML המעודכן לקובץ או הצג אותו
-    //   console.log($.html());
-    const returnHtml = $.html();
-    return returnHtml;
-    // } else {
-    //   console.error('Failed to fetch the URL');
-    // }
-}
-// ##################################################################################################################
 
 app.get("*", (req, res) => {
     res.sendFile(__dirname + "/client/build/index.html");

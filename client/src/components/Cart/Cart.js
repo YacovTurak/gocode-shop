@@ -9,10 +9,6 @@ import { Badge, Button, DialogContent, Typography } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CartItem from "../CartItem/CartItem.js";
 import "./Cart.css";
-// import emptyCart from "....../public/images/empty-cart.png";
-// import emptyCart from "..../public/images/empty-cart.png";
-// import imagePath from "./public/images/empty-cart.png";
-// const imagePath = "./public/images/empty-cart.png";
 
 export default function Cart() {
     const { cartProducts, showCart, setShowCart } = React.useContext(MyContext);
